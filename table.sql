@@ -1,0 +1,51 @@
+-- 通用代碼對照表
+CREATE TABLE dbo.SYST001 (
+    CodeID INT IDENTITY(1,1) PRIMARY KEY,
+    CodeType NVARCHAR(50) NOT NULL,   -- 代碼類型（如 Role, Permission）
+    CodeValue NVARCHAR(50) NOT NULL,  -- 代碼值
+    CodeName NVARCHAR(100) NOT NULL,  -- 代碼名稱
+    Description NVARCHAR(200) NULL,
+    IsActive BIT NOT NULL DEFAULT 1,
+    CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),
+    CreatedID INT NOT NULL,
+    FOREIGN KEY (CreatedID) REFERENCES dbo.SYST010(UserID)
+);
+
+-- 使用者主表
+CREATE TABLE dbo.SYST010 (
+    UserID INT IDENTITY(1,1) PRIMARY KEY,
+    UserName NVARCHAR(100) NOT NULL,
+    PasswordHash NVARCHAR(256) NOT NULL,
+    IsActive BIT NOT NULL DEFAULT 1,
+    CreatedDate DATETIME NOT NULL DEFAULT GETDATE(),
+    CreatedID INT NOT NULL
+    FOREIGN KEY (CreatedID) REFERENCES dbo.SYST010(UserID)
+);
+
+-- 使用者角色明細
+CREATE TABLE dbo.SYST011 (
+    UserID INT NOT NULL,
+    CodeID INT NOT NULL,
+    FOREIGN KEY (UserID) REFERENCES dbo.SYST010(UserID),
+    FOREIGN KEY (CodeID) REFERENCES dbo.SYST001(CodeID)
+);
+
+-- 程式代碼與程式名稱
+CREATE TABLE dbo.SYST020 (
+    ProgramID INT IDENTITY(1,1) PRIMARY KEY,
+    ProgramCode NVARCHAR(50) NOT NULL,  -- 程式代碼
+    ProgramName NVARCHAR(100) NOT NULL, -- 程式名稱
+    Description NVARCHAR(200) NULL,
+    IsActive BIT NOT NULL DEFAULT 1,
+    CreatedDate DATETIME NOT NULL DEFAULT GETDATE()
+);
+
+-- 程式群組表
+CREATE TABLE dbo.SYST021 (
+    ProgramGroupID INT IDENTITY(1,1) PRIMARY KEY,
+    GroupCode NVARCHAR(50) NOT NULL UNIQUE,  -- 群組代碼
+    GroupName NVARCHAR(100) NOT NULL,         -- 群組名稱
+    Description NVARCHAR(200) NULL,
+    IsActive BIT NOT NULL DEFAULT 1,
+    CreatedDate DATETIME NOT NULL DEFAULT GETDATE()
+);
